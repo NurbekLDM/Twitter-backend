@@ -10,17 +10,17 @@ dotenv.config();
 
 const app = express();
 
-// Middleware-lar
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // Frontend URL
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
 
-// Routerlar
+
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);

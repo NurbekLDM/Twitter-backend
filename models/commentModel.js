@@ -55,7 +55,7 @@ const commentModel = {
   },
 
   async delete(id, userId) {
-    // First check if the comment belongs to the user
+    // check comments belongs to the user
     const { data: comment, error: findError } = await supabase
       .from("comments")
       .select("id")
@@ -66,7 +66,7 @@ const commentModel = {
     if (findError) throw findError;
     if (!comment) throw new Error("Comment not found or not owned by user");
 
-    // Then delete the comment
+
     const { error } = await supabase.from("comments").delete().eq("id", id);
 
     if (error) throw error;

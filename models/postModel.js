@@ -46,7 +46,7 @@ const postModel = {
   },
 
   async delete(id, userId) {
-    // First check if the post belongs to the user
+     // check posts belongs to the user
     const { data: post, error: findError } = await supabase
       .from("posts")
       .select("id")

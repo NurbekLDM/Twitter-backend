@@ -9,7 +9,7 @@ const authController = {
     try {
       const { email, password, username, full_name } = req.body;
 
-      // Check if user already exists
+
       const existingUser = await userModel.findByEmail(email);
       if (existingUser) {
         return res
@@ -17,7 +17,7 @@ const authController = {
           .json({ message: "User with this email already exists" });
       }
 
-      // Hash password
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create user

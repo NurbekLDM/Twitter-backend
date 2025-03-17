@@ -1,5 +1,5 @@
 import multer from "multer";
-import supabase from "../config/db.js";  // pool o'zgaruvchisini import qiling
+import supabase from "../config/db.js";  
 
 const pool = supabase;  
 const storage = multer.memoryStorage();

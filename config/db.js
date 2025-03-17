@@ -1,11 +1,15 @@
-const pgp = require('pg-promise')();
-require('dotenv').config();
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+dotenv.config();
 
-const db = pgp({
-    connectionString: process.env.DB_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
 
-module.exports = db;
+if (!supabaseUrl || !supabaseKey) {
+  console.error("Supabase credentials not found in environment variables");
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default supabase;

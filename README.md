@@ -9,6 +9,10 @@ Ushbu hujjat Twitter-backend loyihasining asosiy API endpointlarini tushuntiradi
 • POST /logout – Log out and clear the authentication cookie.
 • PUT /profile-picture – Upload a profile picture for the currently authenticated user.
 • GET /profile-picture/:id – Retrieve a user’s profile picture by user ID.
+• POST /follow – Follow a user.
+• DELETE /unfollow – Unfollow a user.
+• GET /:id/following-count – Retrieve the count of users the specified user is following.
+• GET /:id/followers-count – Retrieve the count of users following the specified user.
 
 ## /api/posts ✨
 

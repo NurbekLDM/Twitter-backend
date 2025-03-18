@@ -9,14 +9,12 @@ const authController = {
     try {
       const { email, password, username, full_name } = req.body;
 
-
       const existingUser = await userModel.findByEmail(email);
       if (existingUser) {
         return res
           .status(400)
           .json({ message: "User with this email already exists" });
       }
-
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -160,6 +158,51 @@ const authController = {
       const user = await userModel.findById(req.params.id);
       if (!user) return res.status(404).json({ message: "User not found" });
       return res.json({ profile_picture: user.profile_picture });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  async followUser(req, res) {
+    try {
+      const { followingId } = req.body;
+      const followerId = req.user.id;
+      if (followerId === followingId) {
+        return res.status(400).json({ message: "Cannot follow yourself" });
+      }
+      const followRecord = await userModel.followUser(followerId, followingId);
+      return res.json({ follow: followRecord });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  async unfollowUser(req, res) {
+    try {
+      const { followingId } = req.body;
+      const followerId = req.user.id;
+      const result = await userModel.unfollowUser(followerId, followingId);
+      return res.json({ unfollowed: result });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  async getFollowingCount(req, res) {
+    try {
+      const userId = req.params.id;
+      const count = await userModel.getFollowingCount(userId);
+      return res.json({ followingCount: count });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  async getFollowersCount(req, res) {
+    try {
+      const userId = req.params.id;
+      const count = await userModel.getFollowersCount(userId);
+      return res.json({ followersCount: count });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

@@ -43,6 +43,48 @@ const userModel = {
     if (error) throw error;
     return data[0];
   },
+
+  async followUser(followerId, followingId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .insert([{ follower_id: followerId, following_id: followingId }])
+      .select();
+
+    if (error) throw error;
+    return data[0];
+  },
+
+  async unfollowUser(followerId, followingId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .delete()
+      .eq("follower_id", followerId)
+      .eq("following_id", followingId)
+      .select();
+
+    if (error) throw error;
+    return data[0];
+  },
+
+  async getFollowingCount(userId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .select("*", { count: "exact" })
+      .eq("follower_id", userId);
+
+    if (error) throw error;
+    return data.length;
+  },
+
+  async getFollowersCount(userId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .select("*", { count: "exact" })
+      .eq("following_id", userId);
+
+    if (error) throw error;
+    return data.length;
+  },
 };
 
 export default userModel;

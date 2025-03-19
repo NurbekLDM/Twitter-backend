@@ -107,53 +107,79 @@ const authController = {
       return res.status(500).json({ message: "Server error" });
     }
   },
-
-  async authStatus(req, res) {
+  
+  async socialLogin(req, res) {
     try {
-      const user = await userModel.findById(req.user.id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      const { email, full_name, username, profile_picture, provider } = req.body;
+      const userData = {
+        email,
+        full_name,
+        username,
+        profile_picture,
+        provider,
+      };
+  
+      const user = await userModel.socialLogin(userData); // userModel.socialLogin funksiyasini chaqirish
+      if (!user || user.length === 0) {
+        return res.status(500).json({ message: "Failed to create or update user" });
       }
-
-      // Remove password from response
-      delete user.password;
-
-      return res.status(200).json({ user });
+      const existingUser = user[0];
+  
+      const token = jwt.sign(
+        { id: existingUser.id, email: existingUser.email },
+        jwtConfig.secret,
+        { expiresIn: jwtConfig.expiresIn }
+      );
+  
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      });
+  
+      return res.status(200).json({ message: "Login successful", user: existingUser });
     } catch (error) {
-      console.error("Auth status error:", error);
+      console.error("Social login error:", error);
       return res.status(500).json({ message: "Server error" });
     }
   },
 
-  async uploadProfilePicture(req, res) {
+  async updateProfile(req, res) {
     try {
-      const file = req.file;
+      const { full_name, username } = req.body;
       let imageUrl = null;
-      if (file) {
-        const { originalname, buffer } = file;
+
+      if (req.file) {
+        const { originalname, buffer } = req.file;
         const filePath = `profiles/${Date.now()}-${originalname}`;
         const { error: storageError } = await supabase.storage
-          .from("profile")
+          .from('profile')
           .upload(filePath, buffer, { upsert: false });
+
         if (storageError) throw storageError;
+
         const { data: publicUrlData } = supabase.storage
-          .from("profile")
+          .from('profile')
           .getPublicUrl(filePath);
+
         imageUrl = publicUrlData.publicUrl;
       }
-      const updatedUser = await userModel.update(req.user.id, {
+
+      const updateData = {
+        full_name,
+        username,
         profile_picture: imageUrl,
-      });
-      return res.json({
-        message: "Profile picture uploaded",
-        user: updatedUser,
-      });
+      };
+
+      const updatedUser = await userModel.update(req.user.id, updateData);
+
+      return res.json({ message: 'Profile updated', user: updatedUser });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   },
 
-  async getProfilePicture(req, res) {
+  async getUserById(req, res) {
     try {
       const user = await userModel.findById(req.params.id);
       if (!user) return res.status(404).json({ message: "User not found" });

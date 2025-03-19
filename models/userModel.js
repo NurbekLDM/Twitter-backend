@@ -76,6 +76,21 @@ const userModel = {
     return data.length;
   },
 
+   
+  async socialLogin(userData) {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .upsert(userData, { onConflict: "email" })
+        .select(); 
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+
   async getFollowersCount(userId) {
     const { data, error } = await supabase
       .from("follows")

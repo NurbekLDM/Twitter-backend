@@ -8,12 +8,13 @@ const {
   register,
   login,
   logout,
-  uploadProfilePicture,
-  getProfilePicture,
+  getUserById,
   followUser,
   unfollowUser,
   getFollowingCount,
   getFollowersCount,
+  updateProfile,
+  socialLogin,
 } = authController;
 
 router.put(
@@ -22,13 +23,15 @@ router.put(
   upload.single("profile_picture"),
   uploadProfilePicture
 );
-router.get("/profile-picture/:id", getProfilePicture);
+router.get("/user/:id", getUserById);
 router.post("/register", register);
 router.post("/login", login);
+router.put("/update", auth, updateProfile);
 router.post("/logout", logout);
 router.post("/follow", auth, followUser);
 router.delete("/unfollow", auth, unfollowUser);
 router.get("/:id/following-count", auth, getFollowingCount);
 router.get("/:id/followers-count", auth, getFollowersCount);
+router.post("/social-login", socialLogin);
 
 export default router;

@@ -3,7 +3,7 @@ import auth from "../middlewares/auth.js";
 import upload from "../middlewares/uploadMiddleware.js";
 import postController from "../controllers/postController.js";
 
-const router = express.Router();
+const router = express.Router()
 router.get("/", auth, postController.getPosts);
 router.post("/create", auth, upload.single("image"), postController.createPost);
 router.get("/:id", auth, postController.getPostById);

@@ -11,6 +11,13 @@ const postModel = {
     return data[0];
   },
 
+  async findAll() {
+    const { data, error } = await supabase.from("posts").select("*");
+
+    if (error) throw error;
+    return data;
+  },
+
   async findById(id) {
     const { data, error } = await supabase
       .from("posts")
@@ -46,7 +53,6 @@ const postModel = {
   },
 
   async delete(id, userId) {
-     // check posts belongs to the user
     const { data: post, error: findError } = await supabase
       .from("posts")
       .select("id")

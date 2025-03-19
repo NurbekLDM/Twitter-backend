@@ -31,6 +31,15 @@ const postController = {
     }
   },
 
+  async getPosts(req, res) {
+    try {
+      const posts = await postModel.findAll();
+      return res.json(posts);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
   async getPostById(req, res) {
     try {
       const post = await postModel.findById(req.params.id);

@@ -4,7 +4,7 @@ import upload from "../middlewares/uploadMiddleware.js";
 import postController from "../controllers/postController.js";
 
 const router = express.Router();
-
+router.get("/", postController.getPosts);
 router.post("/create", auth, upload.single("image"), postController.createPost);
 router.get("/:id", postController.getPostById);
 router.put("/update/:id", auth, upload.single("image"), postController.updatePost);

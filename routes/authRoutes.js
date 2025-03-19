@@ -17,12 +17,7 @@ const {
   socialLogin,
 } = authController;
 
-router.put(
-  "/profile-picture",
-  auth,
-  upload.single("profile_picture"),
-  uploadProfilePicture
-);
+
 router.get("/user/:id", getUserById);
 router.post("/register", register);
 router.post("/login", login);

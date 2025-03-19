@@ -45,10 +45,11 @@ const authController = {
 
       // Remove password from response
       delete newUser.password;
-
+      res.header("Authorization", `Bearer ${token}`);
       return res.status(201).json({
         message: "User registered successfully",
         user: newUser,
+        token: token,
       });
     } catch (error) {
       console.error("Registration error:", error);

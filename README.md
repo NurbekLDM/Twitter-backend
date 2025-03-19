@@ -4,8 +4,8 @@ Ushbu hujjat Twitter-backend loyihasining asosiy API endpointlarini tushuntiradi
 
 ## /api/users 🧑‍💻
 
-• POST /register – Register a new user.
-• POST /login – Log into an existing user account.
+# POST /register – Register a new user.
+# POST /login – Log into an existing user account.
 • POST /logout – Log out and clear the authentication cookie.
 • PUT /profile-picture – Upload a profile picture for the currently authenticated user.
 • GET /profile-picture/:id – Retrieve a user’s profile picture by user ID.

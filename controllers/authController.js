@@ -154,7 +154,7 @@ const authController = {
 
   async updateProfile(req, res) {
     try {
-      const { full_name, username } = req.body;
+      const { full_name, username, bio } = req.body;
       let imageUrl = null;
 
       if (req.file) {
@@ -176,6 +176,7 @@ const authController = {
       const updateData = {
         full_name,
         username,
+        bio,
         profile_picture: imageUrl,
       };
 

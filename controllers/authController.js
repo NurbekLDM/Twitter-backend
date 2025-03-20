@@ -159,7 +159,7 @@ const authController = {
 
       if (req.file) {
         const { originalname, buffer } = req.file;
-        const filePath = `profiles/${Date.now()}-${originalname}`;
+        const filePath = `profile/${Date.now()}-${originalname}`;
         const { error: storageError } = await supabase.storage
           .from('profile')
           .upload(filePath, buffer, { upsert: false });

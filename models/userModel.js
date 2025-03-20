@@ -7,7 +7,10 @@ const userModel = {
       .insert([userData])
       .select();
 
-    if (error) throw error;
+    if (error){
+      console.log("Error", error);
+      throw error;
+    }
     return data[0];
   },
 

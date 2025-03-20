@@ -29,6 +29,9 @@ const authController = {
 
       const newUser = await userModel.create(userData);
       console.log("New User:", newUser);
+      if (!newUser) {
+        return res.status(500).json({ message: "User could not be created" });
+      }
 
       // Generate JWT token
       const token = jwt.sign(

@@ -17,7 +17,7 @@ const {
 } = authController;
 
 
-router.get("/me", auth, getUserById);
+router.get("/me", auth, getUserById)
 router.post("/register", register);
 router.post("/login", login);
 router.put("/update", auth, updateProfile);

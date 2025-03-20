@@ -1,6 +1,5 @@
 import express from "express";
 import auth from "../middlewares/auth.js";
-import upload from "../middlewares/uploadMiddleware.js";
 import authController from "../controllers/authController.js";
 
 const router = express.Router();
@@ -18,7 +17,7 @@ const {
 } = authController;
 
 
-router.get("/user/:id", getUserById);
+router.get("/me", auth, getUserById);
 router.post("/register", register);
 router.post("/login", login);
 router.put("/update", auth, updateProfile);

@@ -226,7 +226,7 @@ const authController = {
 
   async getFollowingCount(req, res) {
     try {
-      const userId = req.params.id;
+      const userId = req.user.id;
       const count = await userModel.getFollowingCount(userId);
       return res.json({ followingCount: count });
     } catch (error) {
@@ -236,7 +236,7 @@ const authController = {
 
   async getFollowersCount(req, res) {
     try {
-      const userId = req.params.id;
+      const userId = req.user.id;
       const count = await userModel.getFollowersCount(userId);
       return res.json({ followersCount: count });
     } catch (error) {

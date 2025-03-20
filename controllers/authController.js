@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+  import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwtConfig from "../config/jwtConfig.js";
@@ -28,6 +28,7 @@ const authController = {
       };
 
       const newUser = await userModel.create(userData);
+      console.log("New User:", newUser);
 
       // Generate JWT token
       const token = jwt.sign(

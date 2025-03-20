@@ -87,8 +87,9 @@ const authController = {
       // Set token in cookie
       res.cookie("token", token, {
         httpOnly: false,
+        path: "/",
         secure: false,
-        sameSite: "Lax",
+        sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 

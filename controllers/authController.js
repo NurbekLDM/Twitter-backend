@@ -86,8 +86,9 @@ const authController = {
 
       // Set token in cookie
       res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        httpOnly: false,
+        secure: false,
+        sameSite: "Lax",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
@@ -125,7 +126,7 @@ const authController = {
         provider,
       };
   
-      const user = await userModel.socialLogin(userData); // userModel.socialLogin funksiyasini chaqirish
+      const user = await userModel.socialLogin(userData); 
       if (!user || user.length === 0) {
         return res.status(500).json({ message: "Failed to create or update user" });
       }

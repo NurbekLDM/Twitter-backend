@@ -70,13 +70,13 @@ const userModel = {
   },
 
   async getFollowingCount(userId) {
-    const { data, error } = await supabase
+    const { count, error } = await supabase
       .from("follows")
       .select("*", { count: "exact" })
       .eq("follower_id", userId);
 
     if (error) throw error;
-    return data.length;
+    return count;
   },
 
    
@@ -95,13 +95,23 @@ const userModel = {
   },
 
   async getFollowersCount(userId) {
-    const { data, error } = await supabase
+    const { count, error } = await supabase
       .from("follows")
       .select("*", { count: "exact" })
       .eq("following_id", userId);
 
     if (error) throw error;
-    return data.length;
+    return count;
+  },
+
+  async getFollowers(userId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .select("*")
+      .eq("following_id", userId);
+
+    if (error) throw error;
+    return data;
   },
 };
 

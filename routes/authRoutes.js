@@ -24,8 +24,8 @@ router.put("/update", auth, updateProfile);
 router.post("/logout", logout);
 router.post("/follow", auth, followUser);
 router.delete("/unfollow", auth, unfollowUser);
-router.get("/:id/following-count", auth, getFollowingCount);
-router.get("/:id/followers-count", auth, getFollowersCount);
+router.get("/following-count", auth, getFollowingCount);
+router.get("/followers-count", auth, getFollowersCount);
 router.post("/social-login", socialLogin);
 
 export default router;

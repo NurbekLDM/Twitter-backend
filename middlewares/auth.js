@@ -4,17 +4,17 @@ import userModel from "../models/userModel.js";
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.cookies.token || 
-        req.headers.authorization?.split(' ')[1] || 
-        req.header('x-auth-token');
+const token = req.cookies.token ||  
+                  req.header('authorization') || req.headers.authorization;
 
+      console.log("Token: ", token);
     if (!token) {
       return res.status(401).json({ message: "Authentication required" });
     }
 
     const decoded = jwt.verify(token, jwtConfig.secret);
     const user = await userModel.findById(decoded.id);
-
+    console.log("User: ", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

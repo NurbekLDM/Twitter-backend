@@ -73,45 +73,37 @@ const commentModel = {
     return true;
   },
 
-  async incrementLikes(id) {
-    // Retrieve current likes
-    const { data: comment, error: findError } = await supabase
-      .from("comments")
-      .select("likes")
-      .eq("id", id)
-      .single();
-    if (findError) throw findError;
+  async likeComment(userId, commentId) {
+    const { data, error } = await supabase
+      .from("comment_likes")
+      .insert([{ user_id: userId, comment_id: commentId }]);
 
-    // Update likes count
-    const newLikes = (comment?.likes || 0) + 1;
-    const { data: updated, error: updateError } = await supabase
-      .from("comments")
-      .update({ likes: newLikes })
-      .eq("id", id)
-      .select();
-    if (updateError) throw updateError;
-    return updated[0];
+    if (error) throw error;
+    return data[0];
   },
 
-  async decrementLikes(id) {
-    // Retrieve current likes
-    const { data: comment, error: findError } = await supabase
-      .from("comments")
-      .select("likes")
-      .eq("id", id)
-      .single();
-    if (findError) throw findError;
+  async unlikeComment(userId, commentId) {
+    const { error } = await supabase
+      .from("comment_likes")
+      .delete()
+      .eq("user_id", userId)
+      .eq("comment_id", commentId);
 
-    // Update likes count
-    const newLikes = Math.max((comment?.likes || 0) - 1, 0);
-    const { data: updated, error: updateError } = await supabase
-      .from("comments")
-      .update({ likes: newLikes })
-      .eq("id", id)
-      .select();
-    if (updateError) throw updateError;
-    return updated[0];
+    if (error) throw error;
+    return true;
   },
+
+  async getUserLikedComments(userId) {
+    const { data, error } = await supabase
+      .from("comment_likes")
+      .select("comment_id")
+      .eq("user_id", userId);
+
+    if (error) throw error;
+    return data.map(like => like.comment_id);
+  },
+
+
 };
 
 export default commentModel;

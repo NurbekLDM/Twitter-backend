@@ -27,8 +27,7 @@ const bookmarkModel = {
     const { data, error } = await supabase
       .from("bookmarks")
       .select(
-        `
-        *,
+        `*,
         posts:post_id (*)
       `
       )
@@ -48,6 +47,17 @@ const bookmarkModel = {
     if (error) throw error;
     return true;
   },
+
+  async getBookmarkedPostsByUser(userId) {
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .select("post_id")
+      .eq("user_id", userId);
+
+    if (error) throw error;
+    return data;
+  }
+  
 };
 
 export default bookmarkModel;

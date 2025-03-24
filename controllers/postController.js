@@ -1,32 +1,25 @@
 import postModel from "../models/postModel.js";
 import likeHistoryModel from "../models/likeHistoryModel.js";
 import bookmarkModel from "../models/bookmarkModel.js";
+import supabase from "../config/db.js";
+import { uploadImage } from "../middlewares/uploadMiddleware.js";
+import likeModel from "../models/likeModel.js";
 
 const postController = {
-  async createPost(req, res) {
+  async  createPost(req, res) {
     try {
-      const file = req.file;
-      let imageUrl = null;
-      if (file) {
-        const { originalname, buffer } = file;
-        const filePath = `posts/${Date.now()}-${originalname}`;
-        const { data: storageData, error: storageError } =
-          await supabase.storage
-            .from("post-image")
-            .upload(filePath, buffer, { upsert: false });
-        if (storageError) throw storageError;
-        const { data: publicUrlData } = supabase.storage
-          .from("post-image")
-          .getPublicUrl(filePath);
-        imageUrl = publicUrlData.publicUrl;
-      }
+      const { text } = req.body;
+      const imageUrl = req.file ? await uploadImage(req.file, "post-image") : null;
+  
       const newPost = await postModel.create({
         user_id: req.user.id,
-        text: req.body.text,
+        text,
         image: imageUrl,
       });
+  
       return res.status(201).json(newPost);
     } catch (error) {
+      console.error("Error creating post:", error);
       return res.status(500).json({ error: error.message });
     }
   },
@@ -52,9 +45,18 @@ const postController = {
 
   async getPostsByUser(req, res) {
     try {
-      const posts = await postModel.findByUserId(req.params.userId);
+      const id = req.user?.id;
+      if (!id) {
+       console.log("User id is not found")
+        return res.status(404).json({ message: "User id not found" });
+    } 
+      console.log("User:", req.user.id);
+      console.log(req.user?.id)
+      const posts = await postModel.findByUserId(id);
+      console.log("Posts:", posts);
       return res.json(posts);
     } catch (error) {
+      console.log("User id:", req.user.id);
       return res.status(500).json({ error: error.message });
     }
   },
@@ -94,26 +96,51 @@ const postController = {
     }
   },
 
-  async likePost(req, res) {
+
+  async  likePost(req, res) {
     try {
-      const postId = req.params.id;
-      await likeHistoryModel.create(req.user.id, postId);
-      await postModel.incrementLikes(postId);
-      return res.json({ message: "Post liked" });
+      const { id: userId } = req.user;
+      const { postId } = req.params;
+  
+      const result = await likeModel.likePost(userId, postId);
+      return res.json(result);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+  
+  async unlikePost(req, res) {
+    try {
+      const { id: userId } = req.user;
+      const { postId } = req.params;
+  
+      const result = await likeModel.unlikePost(userId, postId);
+      return res.json(result);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+  
+  async  getUserLikedPosts(req, res) {
+    try {
+      const { id: userId } = req.user;
+      const likedPosts = await likeModel.getLikedPostsByUser(userId);
+      return res.json({ data: likedPosts });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   },
 
-  async unlikePost(req, res) {
-    try {
-      const postId = req.params.id;
-      await likeHistoryModel.delete(req.user.id, postId);
-      await postModel.decrementLikes(postId);
-      return res.json({ message: "Post unliked" });
+  async getbookMarkedPostsByUser(req , res) {
+    try{
+    const { id: userId} = req.user;
+    const bookmarkedPosts = await bookmarkModel.getBookmarkedPostsByUser(userId);
+    return res.json({ data: bookmarkedPosts });
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+       console.log(error)
     }
+    
+    
   },
 
   async bookmarkPost(req, res) {

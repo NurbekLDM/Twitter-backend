@@ -1,6 +1,9 @@
 import express from "express";
 import auth from "../middlewares/auth.js";
 import authController from "../controllers/authController.js";
+  import upload from "../middlewares/upload.js";
+
+
 
 const router = express.Router();
 const {
@@ -14,15 +17,21 @@ const {
   getFollowersCount,
   updateProfile,
   socialLogin,
+  getUsers,
+  getRecommendedUsers,
+  getUserFollowed
 } = authController;
 
 
 router.get("/me", auth, getUserById)
+router.get("/all", getUsers);
+router.get("/userFollowed", auth, getUserFollowed);
+router.get("/recommended", auth, getRecommendedUsers);
 router.post("/register", register);
 router.post("/login", login);
-router.put("/update", auth, updateProfile);
+router.put("/update", auth, upload.single("profile"), updateProfile);
 router.post("/logout", logout);
-router.post("/follow", auth, followUser);
+router.post("/follow",  auth, followUser);
 router.delete("/unfollow", auth, unfollowUser);
 router.get("/following-count", auth, getFollowingCount);
 router.get("/followers-count", auth, getFollowersCount);

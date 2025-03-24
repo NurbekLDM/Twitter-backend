@@ -12,11 +12,15 @@ const postModel = {
   },
 
   async findAll() {
-    const { data, error } = await supabase.from("posts").select("*");
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*, users: user_id (username, profile_picture), comments(count)")
+      .order("date", { ascending: false });
 
     if (error) throw error;
     return data;
-  },
+},
+
 
   async findById(id) {
     const { data, error } = await supabase
@@ -29,16 +33,26 @@ const postModel = {
     return data;
   },
 
-  async findByUserId(userId) {
+  async findByUserId(id) {
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
-      .eq("user_id", userId)
+      .select(`
+        id,
+        user_id,
+        text,
+        image,
+        likes,
+        date,
+        users(username, profile_picture)
+      `)
+      .eq("user_id", id.toString())
       .order("date", { ascending: false });
 
+    console.log("Data:", data);
     if (error) throw error;
     return data;
-  },
+},
+
 
   async update(id, userId, postData) {
     const { data, error } = await supabase

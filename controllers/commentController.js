@@ -55,7 +55,7 @@ const commentController = {
   async likeComment(req, res) {
     try {
       const commentId = req.params.commentId;
-      await commentModel.incrementLikes(commentId);
+      await commentModel.likeComment(req.user.id, commentId);
       return res.json({ message: "Comment liked" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
@@ -65,12 +65,23 @@ const commentController = {
   async unlikeComment(req, res) {
     try {
       const commentId = req.params.commentId;
-      await commentModel.decrementLikes(commentId);
+      await commentModel.unlikeComment(req.user.id, commentId);
       return res.json({ message: "Comment unliked" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   },
+
+  async getUserLikedComments(req, res) {
+    try {
+      const likedComments = await commentModel.getUserLikedComments(req.user.id);
+      return res.json(likedComments);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+
 };
 
 export default commentController;

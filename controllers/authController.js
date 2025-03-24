@@ -2,7 +2,8 @@
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwtConfig from "../config/jwtConfig.js";
-import supabase from "../config/db.js";
+import { uploadImage } from "../middlewares/uploadMiddleware.js";
+
 
 const authController = {
   async register(req, res) {
@@ -152,37 +153,28 @@ const authController = {
     }
   },
 
-  async updateProfile(req, res) {
+  async  updateProfile(req, res) {
     try {
       const { full_name, username, bio } = req.body;
-      let imageUrl = null;
-
-      if (req.file) {
-        const { originalname, buffer } = req.file;
-        const filePath = `profile/${Date.now()}-${originalname}`;
-        const { error: storageError } = await supabase.storage
-          .from('profile')
-          .upload(filePath, buffer, { upsert: false });
-
-        if (storageError) throw storageError;
-
-        const { data: publicUrlData } = supabase.storage
-          .from('profile')
-          .getPublicUrl(filePath);
-
-        imageUrl = publicUrlData.publicUrl;
-      }
-
-      const updateData = {
-        full_name,
-        username,
-        bio,
-        profile_picture: imageUrl,
-      };
-
+      const imageUrl = req.file ? await uploadImage(req.file, "profile") : null;
+      console.log("Image URL:", imageUrl);
+  
+      const updateData = { full_name, username, bio };
+      if (imageUrl) updateData.profile_picture = imageUrl;
+  
       const updatedUser = await userModel.update(req.user.id, updateData);
+      return res.json({ message: "Profile updated", user: updatedUser });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  },
 
-      return res.json({ message: 'Profile updated', user: updatedUser });
+  async getUserFollowed(req, res) {
+    try {
+      const {id: userId} = req.user;
+      const posts = await userModel.getUserFollowed(userId);
+      return res.json({ data: posts });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -191,6 +183,7 @@ const authController = {
   async getUserById(req, res) {
     try {
       const user = await req.user;
+      console.log("User:", user);
       delete user.password;
       if (!user) return res.status(404).json({ message: "User not found" });
   
@@ -228,7 +221,7 @@ const authController = {
   async getFollowingCount(req, res) {
     try {
       const userId = req.user.id;
-      console.log(userId);
+      
       
       const count = await userModel.getFollowingCount(userId);
       return res.json({ followingCount: count });
@@ -246,6 +239,26 @@ const authController = {
       return res.status(500).json({ error: error.message });
     }
   },
+
+async getUsers(req, res) {
+    try {
+      const users = await userModel.getUsers();
+      return res.json({ data: users });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+async getRecommendedUsers(req, res) {
+    try {
+      const userId = req.user.id;
+      const users = await userModel.getRecommendedUsers(userId);
+      return res.json({ data: users });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+}
+
 };
 
 export default authController;

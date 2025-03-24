@@ -57,6 +57,16 @@ const userModel = {
     return data[0];
   },
 
+ async getUserFollowed(userId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .select("*")
+      .eq("follower_id", userId);
+
+    if (error) throw error;
+    return data;
+ },
+
   async unfollowUser(followerId, followingId) {
     const { data, error } = await supabase
       .from("follows")
@@ -104,15 +114,28 @@ const userModel = {
     return count;
   },
 
-  async getFollowers(userId) {
+  async getUsers(){
     const { data, error } = await supabase
-      .from("follows")
-      .select("*")
-      .eq("following_id", userId);
+      .from("users")
+      .select("*");
 
     if (error) throw error;
     return data;
   },
+  
+  async getRecommendedUsers(userId) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .not("id", "eq", userId) 
+      .order("id", { ascending: false })
+      .limit(5);
+  
+    if (error) throw error;
+    return data;
+  }
+  
+
 };
 
 export default userModel;

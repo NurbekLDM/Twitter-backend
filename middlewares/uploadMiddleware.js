@@ -1,33 +1,21 @@
-import multer from "multer";
 import supabase from "../config/db.js";  
 
-const pool = supabase;  
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const uploadImage = async (file, bucketName) => {
+  if (!file) return null;
 
-export const getProfilePicture = async (req, res) => {
-  try {
-    const userId = req.params.id;
+  const { originalname, buffer, mimetype } = file;
+  const filePath = `${Date.now()}-${originalname}`;
 
-    const result = await pool.query(
-      "SELECT profile_picture FROM users WHERE id = $1",
-      [userId]
-    );
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, buffer, { contentType: mimetype, upsert: false });
 
-    if (result.rows.length === 0 || !result.rows[0].profile_picture) {
-      return res.status(404).json({ message: "Rasm topilmadi" });
-    }
-
-    const imageBuffer = result.rows[0].profile_picture;
-
-    const base64Image = imageBuffer.toString("base64");
-    const imageUrl = `data:image/png;base64,${base64Image}`;
-
-    res.json({ imageUrl });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server xatosi" });
+  if (error) {
+    console.error(`Supabase Storage Error in ${bucketName}:`, error);
+    throw new Error(`Image upload failed in ${bucketName}`);
   }
+
+  return supabase.storage.from(bucketName).getPublicUrl(filePath).data.publicUrl;
 };
 
-export default upload;
+export { uploadImage };

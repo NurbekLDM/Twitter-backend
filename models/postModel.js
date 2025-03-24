@@ -14,12 +14,18 @@ const postModel = {
   async findAll() {
     const { data, error } = await supabase
       .from("posts")
-      .select("*, users: user_id (username, profile_picture), comments(count)")
+      .select(`
+        *,
+        users: user_id (username, profile_picture),
+        comments(count),
+        likes(count)
+      `)
       .order("date", { ascending: false });
 
     if (error) throw error;
     return data;
 },
+
 
 
   async findById(id) {
@@ -43,14 +49,13 @@ const postModel = {
         image,
         likes,
         date,
-        users(username, profile_picture)
+        users(username, profile_picture),
+        comments(count)
       `)
       .eq("user_id", id.toString())
       .order("date", { ascending: false });
 
-    console.log("Data:", data);
-    if (error) throw error;
-    return data;
+    return { data, error };
 },
 
 

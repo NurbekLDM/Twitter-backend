@@ -32,7 +32,8 @@ const commentModel = {
           id,
           username,
           profile_picture
-        )
+        ),
+        comment_likes(count)
       `
       )
       .eq("post_id", postId)

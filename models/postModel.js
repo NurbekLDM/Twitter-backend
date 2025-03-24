@@ -51,6 +51,7 @@ const postModel = {
         date,
         users(username, profile_picture),
         comments(count)
+        likes(count)
       `)
       .eq("user_id", id.toString())
       .order("date", { ascending: false });

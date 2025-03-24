@@ -47,7 +47,6 @@ const postModel = {
         user_id,
         text,
         image,
-        likes,
         date,
         users(username, profile_picture),
         comments(count)

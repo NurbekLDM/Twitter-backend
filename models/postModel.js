@@ -49,7 +49,7 @@ const postModel = {
         image,
         date,
         users(username, profile_picture),
-        comments(count)
+        comments(count),
         likes(count)
       `)
       .eq("user_id", id.toString())

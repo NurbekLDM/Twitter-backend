@@ -32,7 +32,7 @@ router.post("/login", login);
 router.put("/update", auth, upload.single("profile"), updateProfile);
 router.post("/logout", logout);
 router.post("/follow",  auth, followUser);
-router.delete("/unfollow", auth, unfollowUser);
+router.post("/unfollow", auth, unfollowUser);
 router.get("/following-count", auth, getFollowingCount);
 router.get("/followers-count", auth, getFollowersCount);
 router.post("/social-login", socialLogin);

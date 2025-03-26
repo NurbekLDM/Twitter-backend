@@ -54,7 +54,8 @@ const bookmarkModel = {
       .select(`
         post_id,
         posts(*), 
-        users(*)
+        users(*),
+        likes(count)
       `)
       .eq("user_id", userId);
   

@@ -55,7 +55,8 @@ const bookmarkModel = {
         post_id,
         posts (
           *,
-          likes:likes (count)
+          likes:likes (count),
+          comments(count)
         ),
         users(*)
       `)

@@ -155,7 +155,7 @@ const postController = {
   async unbookmarkPost(req, res) {
     try {
       const postId = req.params.id;
-      await bookmarkModel.delete(req.user.id, postId);
+      await bookmarkModel.delete(postId);
       return res.json({ message: "Post unbookmarked" });
     } catch (error) {
       return res.status(500).json({ error: error.message });

@@ -37,11 +37,10 @@ const bookmarkModel = {
     return data;
   },
 
-  async delete(userId, postId) {
+  async delete(postId) {
     const { error } = await supabase
       .from("bookmarks")
       .delete()
-      .eq("user_id", userId)
       .eq("post_id", postId);
 
     if (error) throw error;

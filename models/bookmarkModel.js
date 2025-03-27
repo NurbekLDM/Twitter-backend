@@ -55,13 +55,13 @@ const bookmarkModel = {
         post_id,
         posts (
           *,
+          user:users(*), 
           likes:likes (count),
-          comments(count),
-          users:users(*)
+          comments(count)
         )
       `)
-      .order("created_at", { ascending: false })
-      .eq("posts.user_id", userId); 
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
   
     if (error) throw error;
     return data;

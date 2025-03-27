@@ -53,9 +53,11 @@ const bookmarkModel = {
       .from("bookmarks")
       .select(`
         post_id,
-        posts(*),
-        users(*),
-        likes:posts.likes(count)
+        posts (
+          *,
+          likes:likes (count)
+        ),
+        users(*)
       `)
       .eq("user_id", userId)
       .order('created_at', { ascending: false });

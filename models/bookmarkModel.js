@@ -56,16 +56,17 @@ const bookmarkModel = {
         posts (
           *,
           likes:likes (count),
-          comments(count)
-        ),
-        users(*)
+          comments(count),
+          users:users(*)
+        )
       `)
-      .eq("user_id", userId)
-      .order('created_at', { ascending: false });
-
+      .order("created_at", { ascending: false })
+      .eq("posts.user_id", userId); 
+  
     if (error) throw error;
     return data;
   }
+  
   
   
 };

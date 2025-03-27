@@ -1,6 +1,6 @@
 import supabase from "../config/db.js";
 
-const likeHistoryModel = {
+const likeHistoryModel = {  
   async create(userId, postId) {
     const { data, error } = await supabase
       .from("like_history")

@@ -67,6 +67,16 @@ const userModel = {
     return data;
  },
 
+ async getUserFollowing(userId) {
+    const { data, error } = await supabase
+      .from("follows")
+      .select("*")
+      .eq("following_id", userId);
+
+    if (error) throw error
+    return data;
+ },
+
   async unfollowUser(followerId, followingId) {
     const { data, error } = await supabase
       .from("follows")
@@ -89,7 +99,6 @@ const userModel = {
     return count;
   },
 
-   
   async socialLogin(userData) {
     try {
       const { data, error } = await supabase
@@ -135,6 +144,7 @@ const userModel = {
     return data;
   }
   
+
 
 };
 

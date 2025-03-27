@@ -48,19 +48,18 @@ const bookmarkModel = {
     return true;
   },
 
-  async getBookmarkedPostsByUser(userId) {
+  async getBookmarkedPostsByUser() {
     const { data, error } = await supabase
       .from("bookmarks")
       .select(`
         post_id,
         posts (
           *,
-          user:users(*), 
+          users:users(*), 
           likes:likes (count),
           comments(count)
         )
       `)
-      .eq("user_id", userId)
       .order("created_at", { ascending: false });
   
     if (error) throw error;

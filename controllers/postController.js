@@ -133,8 +133,7 @@ const postController = {
 
   async getbookMarkedPostsByUser(req , res) {
     try{
-    const { id: userId} = req.user;
-    const bookmarkedPosts = await bookmarkModel.getBookmarkedPostsByUser(userId);
+    const bookmarkedPosts = await bookmarkModel.getBookmarkedPostsByUser();
     return res.json({ data: bookmarkedPosts });
     } catch (error) {
        console.log(error)

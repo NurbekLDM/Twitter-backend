@@ -27,7 +27,7 @@ const postController = {
   async getPosts(req, res) {
     try {
       const posts = await postModel.findAll();
-      return res.json(posts);
+      return res.json({data: posts});
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

@@ -4,6 +4,7 @@ import userModel from "../models/userModel.js";
 import jwtConfig from "../config/jwtConfig.js";
 import { uploadImage } from "../middlewares/uploadMiddleware.js";
 import supabase from "../config/db.js";
+import postModel from "../models/postModel.js";
 
 
 const authController = {
@@ -260,38 +261,19 @@ async getRecommendedUsers(req, res) {
     }
 },
 
-async getUserFollowingUserPosts(userId) {
+async getUserFollowingUserPosts(req, res) {
+  try {
+      const userId = req.user.id;
 
-  const { data: followingIds, error: followsError } = await supabase
-      .from("follows")
-      .select("following_id")
-      .eq("follower_id", userId);
+      const followingIds = await userModel.getFollowingIds(userId);
 
-  if (followsError) {
-      console.error("Error fetching following list:", followsError);
-      return null;
+
+      const posts = await postModel.findByUserId(followingIds);
+
+      res.status(200).json(posts);
+  } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error });
   }
-
-
-  if (!followingIds || followingIds.length === 0) {
-      return [];
-  }
-
-
-  const followingIdList = followingIds.map((item) => item.following_id);
-
-
-  const { data: posts, error: postsError } = await supabase
-      .from("posts")
-      .select("*")
-      .in("user_id", followingIdList); 
-
-  if (postsError) {
-      console.error("Error fetching posts:", postsError);
-      return null;
-  }
-
-  return posts;
 },
 
 

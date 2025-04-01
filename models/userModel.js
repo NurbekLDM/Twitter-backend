@@ -144,6 +144,24 @@ const userModel = {
     return data;
   },
 
+  async getFollowingIds(userId) {
+    try {
+        const { data, error } = await supabase
+            .from("follows")
+            .select("following_id")
+            .eq("follower_id", userId);
+
+        if (error) {
+            console.error("Error fetching following list:", error);
+            throw error;
+        }
+
+        return data?.map((item) => item.following_id) || [];
+    } catch (err) {
+        console.error("Unexpected error in getFollowingIds:", err);
+        return [];
+    }
+}
 
   
 

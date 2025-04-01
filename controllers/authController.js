@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwtConfig from "../config/jwtConfig.js";
 import { uploadImage } from "../middlewares/uploadMiddleware.js";
+import supabase from "../config/db.js";
 
 
 const authController = {

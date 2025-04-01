@@ -147,8 +147,10 @@ const userModel = {
   async getUserFollowingUserPosts(userId) {
     const { data, error } = await supabase
         .from("posts")
-        .select("*, follows!inner(following_id, follower_id)")
-        .eq("follows.follower_id", userId);
+        .select("*, follows(following_id)")
+        .in("user_id", 
+            supabase.from("follows").select("following_id").eq("follower_id", userId)
+        );
 
     if (error) {
         console.error("Error fetching posts:", error);

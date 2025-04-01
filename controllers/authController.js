@@ -259,15 +259,40 @@ async getRecommendedUsers(req, res) {
     }
 },
 
-async getUserFollowingUserPosts(req, res) {
-    try {
-      const userId = req.user.id;
-      const posts = await userModel.getUserFollowingUserPosts(userId);
-      return res.json({ data: posts });
-    } catch (error) {
-      return res.status(500).json({ error: error.message });
-    }
+async getUserFollowingUserPosts(userId) {
+
+  const { data: followingIds, error: followsError } = await supabase
+      .from("follows")
+      .select("following_id")
+      .eq("follower_id", userId);
+
+  if (followsError) {
+      console.error("Error fetching following list:", followsError);
+      return null;
+  }
+
+
+  if (!followingIds || followingIds.length === 0) {
+      return [];
+  }
+
+
+  const followingIdList = followingIds.map((item) => item.following_id);
+
+
+  const { data: posts, error: postsError } = await supabase
+      .from("posts")
+      .select("*")
+      .in("user_id", followingIdList); 
+
+  if (postsError) {
+      console.error("Error fetching posts:", postsError);
+      return null;
+  }
+
+  return posts;
 },
+
 
 
 async changePassword(req, res) {

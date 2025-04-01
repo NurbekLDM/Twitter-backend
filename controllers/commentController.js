@@ -23,7 +23,7 @@ const commentController = {
   async getCommentsByPostId(req, res) {
     try {
       const comments = await commentModel.findByPostId(req.params.postId);
-      return res.json(comments);
+      return res.json({data: comments});
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

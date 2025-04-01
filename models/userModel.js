@@ -142,8 +142,19 @@ const userModel = {
   
     if (error) throw error;
     return data;
-  }
+  },
+
+  async getUserFollowingUserPosts(userId) {
+    const { data, error } = await supabase
+    .from("posts")
+    .select("*, follows!inner(following_id)")
+    .eq("follows.follower_id", userId);
+
+    if (error) throw error;
+    return data;
+  },
   
+
 
 
 };

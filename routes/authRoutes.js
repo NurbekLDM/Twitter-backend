@@ -19,13 +19,17 @@ const {
   socialLogin,
   getUsers,
   getRecommendedUsers,
-  getUserFollowed
+  getUserFollowed,
+  getUserFollowingUserPosts,
+  changePassword,
 } = authController;
 
 
 router.get("/me", auth, getUserById)
 router.get("/all", getUsers);
 router.get("/userFollowed", auth, getUserFollowed);
+router.get("/userFollowedPosts", auth, getUserFollowingUserPosts);
+router.post("/change-password", auth, changePassword);
 router.get("/recommended", auth, getRecommendedUsers);
 router.post("/register", register);
 router.post("/login", login);
